@@ -21,6 +21,15 @@ La atención se registra en **cuatro vistas**, separando lo que **cuenta el paci
 
 Al analizar el diagnóstico también se revisan el relato del paciente y el examen físico. Lo que viene del relato del paciente aparece con la etiqueta **«Lo relató el paciente»**: es información que el médico decide si convierte en diagnóstico. Lo negado («se descarta ACV», «niega fiebre») aparece **tachado** en el texto y en la lista **«No se registrarán»**.
 
+### Dictado de la atención completa
+Con **Dictar toda la atención** (junto al nombre del paciente) el médico dicta la atención de corrido, sin ir campo por campo. Al pulsar **Repartir en la ficha**, el texto se reparte solo en el relato del paciente (motivo, enfermedad actual, antecedentes, medicamentos, hábitos), los signos vitales y el examen físico, el cuadro del diagnóstico y el plan (indicaciones, exámenes, derivación, control, reposo, licencia y recetas). Cada campo llenado queda marcado **«Desde el dictado · revise»** hasta que el médico lo edite, se puede **deshacer el reparto** completo y el diagnóstico igual hay que analizarlo, validarlo y firmarlo: nada se firma solo.
+
+- **Sin IA (siempre disponible, también en línea):** reglas en `dictado.js`. Funcionan mejor si el médico nombra las secciones («motivo de consulta…», «el paciente refiere…», «antecedentes…», «usa…», «al examen…», «diagnóstico…», «indicaciones…», «exámenes…», «receta…», «control en un mes») y dice «punto» entre frases; también entienden dictados sin puntuación.
+- **Con IA (opcional):** si `servidor.py` está iniciado y el `.env` tiene `ANTHROPIC_API_KEY`, aparece la casilla **Repartir con IA** (modelo `IA_MODELO`, por defecto `claude-haiku-5-5`). Solo se envía el texto dictado; si la IA falla, se usan las reglas. Es para el prototipo con datos ficticios: en la clínica se usaría un modelo instalado en sus servidores.
+- **Usar un dictado de ejemplo** carga tres dictados de prueba (el tercero sin puntuación) para probarlo sin micrófono.
+
+Es una herramienta de **dictado del médico** (micrófono de solapa o cintillo), no de escucha de la conversación con el paciente, que el proyecto dejó fuera del alcance por privacidad.
+
 El botón **Micrófono** (barra superior) permite elegir el micrófono de solapa o cintillo y probarlo durante 5 segundos: indica si la voz se capta bien, baja o saturada, y avisa si parece el micrófono del computador. El reconocimiento de voz del navegador usa el micrófono predeterminado; la elección queda guardada para cuando Whisper reemplace al navegador.
 
 ## Archivos
@@ -32,7 +41,8 @@ El botón **Micrófono** (barra superior) permite elegir el micrófono de solapa
 | `datos.js` | Agenda de cada médico, pacientes nuevos y estado de cada atención |
 | `ficha.html` + `app.js` | Ficha clínica SOAP: dictado, diagnóstico estructurado y grabación con botón (botón «Grabar» o botón del micrófono, tecla L) con comandos de voz |
 | `microfono.js` | Panel «Micrófono»: elegir el micrófono y probar su nivel durante 5 segundos |
-| `config.js` | Dirección del servidor CIE-11 cuando la app está publicada en internet |
+| `dictado.js` | Dictado de la atención completa: reparte el texto en los campos (reglas y, opcionalmente, IA vía `servidor.py`) |
+| `config.js` | Direcciones del servidor (CIE-11 e IA) cuando la app está publicada en internet |
 | `snomed.js` | Catálogo de 343 conceptos SNOMED CT con sus frases en español |
 | `sinonimos.js` | Otras formas de decir cada enfermedad o síntoma (siglas, nombres coloquiales), para estandarizarlas en un solo concepto |
 | `styles.css` | Todos los estilos |

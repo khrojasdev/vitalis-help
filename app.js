@@ -1085,5 +1085,17 @@ $("volverPac").addEventListener("click",function(){
 $("avisoQuedar").addEventListener("click",function(){$("avisoSalir").hidden=true;$("volverPac").focus();});
 $("avisoVolver").addEventListener("click",irALista);
 
+/* ---- 7. Funciones que usa dictado.js (dictado de la atención completa) ---- */
+window.VitalisFicha={
+  punct:punct, cap:cap, fixVoz:fixVoz, esc:esc, fire:fire, SR:SR,
+  rx:function(){return S.rx;}, setRx:function(l){S.rx=l;renderRx();refreshStatus();},
+  vitals:vitals, refreshStatus:refreshStatus, showSec:showSec, go:go, curSec:curSec,
+  setTxt:function(t){$("txt").value=t;}, getTxt:function(){return $("txt").value;},
+  meds:function(){return Array.prototype.map.call(document.querySelectorAll("#meds option"),function(o){return o.value;});},
+  // detiene cualquier otro micrófono de la ficha antes de empezar el dictado completo
+  detenerTodo:function(){stopField();stopAll();if(HF.on)hfStop("Grabación detenida: está usando el dictado de la atención completa.");},
+  cie11Base:function(){return CIE11.base;}, cie11Estado:function(){return CIE11.estado;}
+};
+
 go(1);
 })();

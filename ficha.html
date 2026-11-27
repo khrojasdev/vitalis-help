@@ -34,12 +34,42 @@
     <span>Edad <b id="pEdad"></b></span><span>Sexo <b id="pSexo"></b></span><span>Previsión <b id="pPrev"></b></span><span>Ficha <b id="pFicha"></b></span><span>Alergias <b id="pAlerg"></b></span>
   </div>
   <span class="tag" id="atTag">Atención en curso</span>
+  <button class="btn primary dictbtn" type="button" id="dictBtn" aria-expanded="false" aria-controls="dictPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg>Dictar toda la atención</button>
 </div></div>
 <div class="aviso-salir" id="avisoSalir" hidden role="alertdialog" aria-labelledby="avisoTxt"><div class="in pad">
   <span id="avisoTxt"><b>La atención no está cerrada.</b> Si vuelve a la lista, se perderá lo registrado en esta atención.</span>
   <span class="acc"><button class="btn" type="button" id="avisoQuedar">Seguir en la ficha</button><button class="btn primary" type="button" id="avisoVolver">Volver igual</button></span>
 </div></div>
 
+<section class="dictpanel" id="dictPanel" hidden aria-labelledby="dictTit"><div class="in pad">
+  <div class="dict-head">
+    <div><h2 id="dictTit">Dictado de la atención completa</h2>
+    <p class="from">Dicte toda la atención de corrido, sin ir campo por campo. Al terminar, pulse <b>Repartir en la ficha</b>: cada parte queda en su sección, marcada para que usted la revise. Nada se firma solo.</p></div>
+    <button class="btn" type="button" id="dictCerrar">Cerrar</button>
+  </div>
+  <details class="dict-guia"><summary>Cómo dictar para que todo quede en su lugar</summary>
+    <p>Nombre cada sección antes de su contenido y diga «punto» entre frases. Por ejemplo:</p>
+    <p class="dict-ej">«<b>Motivo de consulta</b> dolor de cabeza de tres días punto <b>El paciente refiere</b> … punto <b>Antecedentes</b> hipertensión punto <b>Usa</b> losartán 50 mg cada 12 horas punto <b>No fuma</b> punto <b>Al examen</b> presión 150 sobre 90, frecuencia cardíaca 80 … punto <b>Diagnóstico</b> … punto <b>Indicaciones</b> … punto <b>Exámenes</b> … punto <b>Receta</b> paracetamol 500 mg 1 comprimido cada 8 horas por 5 días punto <b>Control en un mes</b>»</p>
+    <p>Es una herramienta de dictado del médico: use el micrófono de solapa o cintillo y no grabe la conversación con el paciente.</p>
+  </details>
+  <div class="dict-rec">
+    <button class="mic" id="dictMic" type="button" aria-label="Dictar la atención"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button>
+    <div class="rec-info">
+      <div class="dict-estado" id="dictEstado" aria-live="polite">Pulse el micrófono y dicte toda la atención de corrido.</div>
+      <div class="wave" id="dictOnda" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="timer" id="dictReloj">00:00</div>
+    </div>
+  </div>
+  <label class="label" for="dictTxt">Lo que se dictó (puede corregirlo o escribir)</label>
+  <textarea id="dictTxt" spellcheck="false" placeholder="El texto dictado aparece aquí."></textarea>
+  <div class="live" id="dictParcial" aria-live="polite"></div>
+  <div class="dict-ia" id="dictIA" hidden><label><input type="checkbox" id="dictUsarIA"> Repartir con IA</label> <span class="from" id="dictIANota"></span></div>
+  <div class="actions">
+    <div class="r"><button class="btn link" type="button" id="dictEjemplo">Usar un dictado de ejemplo</button><button class="btn link" type="button" id="dictBorrar">Borrar</button></div>
+    <div class="r"><button class="btn primary" type="button" id="dictRepartir">Repartir en la ficha</button></div>
+  </div>
+  <div id="dictRes" aria-live="polite"></div>
+</div></section>
 <div class="main pad">
   <nav class="side" aria-label="Secciones de la atención">
     <small>Atención de hoy · SOAP</small>
@@ -162,6 +192,7 @@
 <script src="config.js"></script>
 <script src="app.js"></script>
 <script src="microfono.js"></script>
+<script src="dictado.js"></script>
 <script>
 /* Aviso si styles.css o app.js no están en la misma carpeta que este archivo */
 window.addEventListener("load",function(){
