@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es" data-privada>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vitalis Help · Ficha clínica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script src="auth.js"></script>
+<script src="datos.js"></script>
+</head>
+<body>
+<div class="appbar"><div class="in pad">
+  <div class="sys"><i>VH</i>Vitalis Help · Ficha clínica electrónica</div>
+  <div class="topr"><button class="hfbtn" id="hfBtn" type="button" aria-pressed="false" title="Pulse aquí o el botón del micrófono (tecla L) para grabar; vuelva a pulsar para detener. Mientras graba puede dictar y dar comandos de voz."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg><span id="hfBtnTxt">Grabar</span></button>
+  <button class="micbtn" id="micCfgBtn" type="button" aria-expanded="false" aria-controls="micPanel">Micrófono</button>
+  <div class="who" data-usuario></div><button class="salir" type="button" data-salir>Cerrar sesión</button></div>
+</div></div>
+
+<div class="micpanel" id="micPanel" hidden role="dialog" aria-labelledby="micTit"><div class="in pad">
+  <div class="mp-head"><h2 id="micTit">Micrófono</h2><button class="btn" type="button" id="micClose">Cerrar</button></div>
+  <p class="from">Elija el micrófono de solapa o cintillo y pruébelo antes de la atención: hable normalmente durante 5 segundos.</p>
+  <div class="mp-row"><label for="micSel" class="flabel">Micrófono</label><select id="micSel"><option value="">Predeterminado del navegador</option></select>
+  <button class="btn primary" type="button" id="micTest">Probar 5 segundos</button></div>
+  <div class="mp-meter" aria-hidden="true"><i id="micBar"></i></div>
+  <div class="mp-res" id="micRes" aria-live="polite"></div>
+  <p class="from" id="micNota">El dictado del prototipo usa el reconocimiento de voz del navegador, que escucha el micrófono predeterminado. Si el de solapa o cintillo no es el predeterminado, cámbielo en el ícono del candado de la barra de direcciones (o en la configuración del sistema). En la versión final, Whisper grabará desde el micrófono elegido aquí.</p>
+</div></div>
+<div class="patient"><div class="in pad">
+  <button class="volver" type="button" id="volverPac">← Mis pacientes</button>
+  <div class="name" id="pNombre"></div>
+  <div class="meta">
+    <span>Edad <b id="pEdad"></b></span><span>Sexo <b id="pSexo"></b></span><span>Previsión <b id="pPrev"></b></span><span>Ficha <b id="pFicha"></b></span><span>Alergias <b id="pAlerg"></b></span>
+  </div>
+  <span class="tag" id="atTag">Atención en curso</span>
+</div></div>
+<div class="aviso-salir" id="avisoSalir" hidden role="alertdialog" aria-labelledby="avisoTxt"><div class="in pad">
+  <span id="avisoTxt"><b>La atención no está cerrada.</b> Si vuelve a la lista, se perderá lo registrado en esta atención.</span>
+  <span class="acc"><button class="btn" type="button" id="avisoQuedar">Seguir en la ficha</button><button class="btn primary" type="button" id="avisoVolver">Volver igual</button></span>
+</div></div>
+
+<div class="main pad">
+  <nav class="side" aria-label="Secciones de la atención">
+    <small>Atención de hoy · SOAP</small>
+    <button data-sec="paciente"><span class="soap">S</span><span class="lbl">Relato del paciente</span><span class="st"></span></button>
+    <button data-sec="examen"><span class="soap">O</span><span class="lbl">Examen físico</span><span class="st"></span></button>
+    <button data-sec="diagnostico"><span class="soap">A</span><span class="lbl">Diagnóstico</span><span class="st"></span></button>
+    <button data-sec="plan"><span class="soap">P</span><span class="lbl">Plan y cierre</span><span class="st"></span></button>
+    <div class="side-leyenda"><span class="quien q-pac">Paciente</span><span class="quien q-med">Médico</span></div>
+  </nav>
+
+<div class="secs" style="min-width:0"><section class="sheet sec" id="sec-paciente" aria-label="Relato del paciente"><div class="sheet-head"><div><p class="soap-k">S · Subjetivo</p><h1>Relato del paciente</h1><p>Registre lo que el paciente relata, idealmente con sus propias palabras. Aquí no va la interpretación del médico: esa va en Examen físico y Diagnóstico.</p></div><span class="quien q-pac">Lo cuenta el paciente</span></div><div class="form"><div class="field"><label for="f_motivo">Motivo de consulta</label><span class="hint">En palabras del paciente.</span><div class="fwrap"><textarea id="f_motivo" data-store="1" style="min-height:80px" placeholder="Ej.: «Me duele la cabeza hace tres días»"></textarea><button class="dict" type="button" data-target="f_motivo" aria-label="Dictar motivo de consulta" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_motivo" aria-live="polite"></div></div><div class="field"><label for="f_ea">Enfermedad actual</label><span class="hint">Lo que relata: cuándo empezó, cómo ha evolucionado y qué otros síntomas tiene.</span><div class="fwrap"><textarea id="f_ea" data-store="1" placeholder="Ej.: Refiere dolor opresivo que cede parcialmente con paracetamol. Niega fiebre."></textarea><button class="dict" type="button" data-target="f_ea" aria-label="Dictar enfermedad actual" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_ea" aria-live="polite"></div></div><div class="grid2"><div class="field"><label for="f_ant">Antecedentes mórbidos</label><span class="hint">Enfermedades que el paciente refiere tener.</span><div class="fwrap"><textarea id="f_ant" data-store="1" style="min-height:90px"></textarea><button class="dict" type="button" data-target="f_ant" aria-label="Dictar antecedentes mórbidos" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_ant" aria-live="polite"></div></div><div class="field"><label for="f_med">Medicamentos de uso habitual</label><div class="fwrap"><textarea id="f_med" data-store="1" style="min-height:90px"></textarea><button class="dict" type="button" data-target="f_med" aria-label="Dictar medicamentos de uso habitual" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_med" aria-live="polite"></div></div></div><div class="field"><span class="flabel">Hábitos</span><div class="grid2"><label class="field" style="font-weight:400">Tabaco<select id="f_tab" data-store="1"><option>No fuma</option><option>Fuma</option><option>Exfumador</option></select></label><label class="field" style="font-weight:400">Alcohol<select id="f_alc" data-store="1"><option>No consume</option><option>Ocasional</option><option>Frecuente</option></select></label></div></div><div class="secnav"><span></span><button class="btn primary" data-go="examen">Continuar con examen físico</button></div></div></section><section class="sheet sec hidden" id="sec-examen" aria-label="Examen físico"><div class="sheet-head"><div><p class="soap-k">O · Objetivo</p><h1>Examen físico</h1><p>Signos vitales y hallazgos objetivos del examen.</p></div><span class="quien q-med">Lo observa y mide el médico</span></div><div class="form"><div class="field"><span class="flabel">Signos vitales</span><div class="grid4"><div class="vital"><span class="flabel">Presión arterial</span><div class="unit"><div class="bp"><input class="inp" id="f_pas" data-store="1" inputmode="numeric" aria-label="Presión sistólica"><span>/</span><input class="inp" id="f_pad" data-store="1" inputmode="numeric" aria-label="Presión diastólica"></div><span>mmHg</span></div><div class="flag" id="fl-pa"></div></div><div class="vital"><label class="flabel" for="f_fc">Frecuencia cardíaca</label><div class="unit"><input class="inp" id="f_fc" data-store="1" inputmode="decimal" ><span>lpm</span></div><div class="flag" id="fl-f_fc"></div></div><div class="vital"><label class="flabel" for="f_fr">Frecuencia respiratoria</label><div class="unit"><input class="inp" id="f_fr" data-store="1" inputmode="decimal" ><span>rpm</span></div><div class="flag" id="fl-f_fr"></div></div><div class="vital"><label class="flabel" for="f_temp">Temperatura</label><div class="unit"><input class="inp" id="f_temp" data-store="1" inputmode="decimal" ><span>°C</span></div><div class="flag" id="fl-f_temp"></div></div><div class="vital"><label class="flabel" for="f_sat">Saturación O₂</label><div class="unit"><input class="inp" id="f_sat" data-store="1" inputmode="decimal" ><span>%</span></div><div class="flag" id="fl-f_sat"></div></div><div class="vital"><label class="flabel" for="f_peso">Peso</label><div class="unit"><input class="inp" id="f_peso" data-store="1" inputmode="decimal" ><span>kg</span></div><div class="flag" id="fl-f_peso"></div></div><div class="vital"><label class="flabel" for="f_talla">Talla</label><div class="unit"><input class="inp" id="f_talla" data-store="1" inputmode="decimal" ><span>m</span></div><div class="flag" id="fl-f_talla"></div></div><div class="vital"><span class="flabel">IMC</span><div class="unit"><output id="f_imc" style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">—</output><span>kg/m²</span></div><div class="flag" id="fl-imc"></div></div></div></div><div class="field"><label for="f_ef">Examen físico general y segmentario</label><div class="fwrap"><textarea id="f_ef" data-store="1"></textarea><button class="dict" type="button" data-target="f_ef" aria-label="Dictar examen físico general y segmentario" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_ef" aria-live="polite"></div></div><div class="secnav"><button class="btn" data-go="paciente">Anterior</button><button class="btn primary" data-go="diagnostico">Continuar con diagnóstico</button></div></div></section><section class="sheet sec hidden" id="sec-diagnostico" aria-labelledby="ttl">
+    <div class="sheet-head"><div><p class="soap-k">A · Evaluación</p><h1><span id="ttl">Diagnóstico</span></h1><p>Dicte o escriba su evaluación y diagnóstico. El sistema los estructura con SNOMED CT y CIE-11 para que usted los valide y firme.</p></div><span class="quien q-med">Juicio clínico del médico</span></div>
+    <ol class="steps" id="steps" aria-label="Pasos">
+      <li data-s="1"><i>1</i>Dictar o escribir</li>
+      <li data-s="2"><i>2</i>Validar diagnósticos</li>
+      <li data-s="3"><i>3</i>Firmar</li>
+    </ol>
+
+    <!-- PASO 1: dictar o escribir (el texto se puede corregir directamente) -->
+    <div class="stage" id="s1">
+      <div class="rec rec-row">
+        <button class="mic" id="mic" aria-label="Comenzar dictado por voz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button>
+        <div class="rec-info">
+          <div class="rec-state" id="recState">Pulse el micrófono para dictar, o escriba directamente en el cuadro</div>
+          <div class="wave" id="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="timer" id="timer">00:00</div>
+        </div>
+      </div>
+      <label for="txt" class="label">Evolución y diagnóstico del médico</label>
+      <textarea id="txt" spellcheck="false" placeholder="Ej.: Paciente con HTA y DM2 de larga data, consulta por cefalea de tres días. Se descarta ACV."></textarea>
+      <div class="live" id="live" aria-live="polite"></div>
+      <div class="privacy" id="micMsg" aria-live="polite"></div>
+      <p class="from">Al analizar también se revisan el relato del paciente y el examen físico. Lo que viene del paciente se marca como «Lo relató el paciente» para que usted decida si es un diagnóstico.</p>
+      <div class="analyzing hidden" id="analyzing" aria-live="polite">
+        <div data-a="1"><i></i>Corrigiendo errores y expandiendo abreviaturas</div>
+        <div data-a="2"><i></i>Identificando diagnósticos y hallazgos</div>
+        <div data-a="3"><i></i>Buscando términos estandarizados</div>
+      </div>
+      <div class="privacy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Prototipo: el reconocimiento de voz lo hace el navegador. En la versión final, Whisper transcribe el audio en el equipo de la clínica.</div>
+      <div class="actions">
+        <div class="r"><button class="btn link" id="sampleBtn">Usar un relato de ejemplo</button></div>
+        <div class="r"><button class="btn primary" id="analyze">Analizar</button></div>
+      </div>
+    </div>
+    <!-- PASO 2: validar -->
+    <div class="stage hidden" id="s2">
+      <p class="lead">Estos son los diagnósticos que el sistema identificó en su dictado. Acepte, cambie o descarte cada uno.</p>
+      <div class="two">
+        <div>
+          <p class="label">Su dictado</p>
+          <div class="hl" id="hl"></div>
+          <div class="legend">
+            <span><i class="m-dx"></i>Identificado</span><span><i class="m-pend"></i>Necesita su revisión</span><span><i class="m-fix"></i>Palabra corregida</span><span><i class="m-neg"></i>Negado: no se registra</span>          </div>
+          <div class="negs" id="negs"></div>
+        </div>
+        <div>
+          <p class="label">Diagnósticos sugeridos</p>
+          <div class="sugs" id="sugs"></div>
+          <div class="add" style="margin-top:10px">
+            <label for="addq" class="from">¿Falta un diagnóstico? Búsquelo para agregarlo</label>
+            <input type="search" id="addq" placeholder="Ej.: neumonía, gastritis, asma" autocomplete="off">
+            <div class="flist" id="addlist"></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="back2">Volver al dictado</button>
+        <div class="r"><span class="from" id="pendInfo" style="align-self:center"></span><button class="btn primary" id="toS4" disabled>Continuar</button></div>
+      </div>
+    </div>
+
+    <!-- PASO 3: firmar -->
+    <div class="stage hidden" id="s3">
+      <p class="lead">Confirme cómo quedará registrado el diagnóstico en la ficha.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Diagnóstico</th><th>Tipo</th><th>Certeza</th><th>Estado</th><th>Codificación</th></tr></thead>
+          <tbody id="sumBody"></tbody>
+        </table>
+      </div>
+      <div class="orig"><b>Texto original del dictado</b> (se guarda junto al diagnóstico)<br><span id="origTxt"></span></div>
+      <div class="actions">
+        <button class="btn" id="back3">Volver</button>
+        <div class="r"><button class="btn primary" id="save">Firmar y guardar en la ficha</button></div>
+      </div>
+    </div>
+
+    <!-- GUARDADO -->
+    <div class="stage hidden" id="s4">
+      <div class="done-box">
+        <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div>
+        <h2>Diagnóstico registrado en la ficha</h2>
+        <p class="lead" id="doneTime"></p>
+        <div class="done-list" id="doneList"></div>
+      </div>
+      <div class="actions">
+        <span class="from">El diagnóstico quedó registrado en la ficha.</span>
+        <div class="r"><button class="btn" id="edit">Editar diagnóstico</button><button class="btn primary" id="newAt">Continuar con el plan</button></div>
+      </div>
+    </div>
+  </section><section class="sheet sec hidden" id="sec-plan" aria-label="Plan y cierre"><div class="sheet-head"><div><p class="soap-k">P · Plan</p><h1>Plan y cierre</h1><p>Indicaciones, recetas y cierre de la atención en una sola vista.</p></div><span class="quien q-med">Lo indica el médico</span></div><div class="form"><h2 class="sub">Indicaciones</h2><div class="field"><label for="f_ind">Indicaciones generales</label><div class="fwrap"><textarea id="f_ind" data-store="1"></textarea><button class="dict" type="button" data-target="f_ind" aria-label="Dictar indicaciones generales" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_ind" aria-live="polite"></div></div><div class="grid2"><div class="field"><label for="f_exa">Exámenes solicitados</label><div class="fwrap"><textarea id="f_exa" data-store="1" style="min-height:80px"></textarea><button class="dict" type="button" data-target="f_exa" aria-label="Dictar exámenes solicitados" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_exa" aria-live="polite"></div></div><div class="field"><label for="f_der">Derivación</label><select id="f_der" data-store="1"><option>Sin derivación</option><option>Cardiología</option><option>Nefrología</option><option>Endocrinología</option><option>Gastroenterología</option><option>Traumatología</option><option>Psiquiatría</option><option>Broncopulmonar</option></select><label for="f_ctrl" style="margin-top:8px">Próximo control</label><select id="f_ctrl" data-store="1"><option>Sin control</option><option>En 1 semana</option><option>En 2 semanas</option><option>En 1 mes</option><option>En 3 meses</option></select></div></div><div class="field"><span class="flabel">Reposo y licencia</span><div class="checks"><label><input type="checkbox" id="f_rep" data-store="1"> Reposo</label><label><input type="checkbox" id="f_lic" data-store="1"> Licencia médica</label><label>Días <input class="inp" id="f_dias" data-store="1" inputmode="numeric" style="width:80px"></label></div></div><h2 class="sub" id="recetas">Recetas</h2><div class="tablewrap"><table class="rx"><thead><tr><th>Medicamento</th><th>Dosis</th><th>Frecuencia</th><th>Duración</th><th><span class="sr">Quitar</span></th></tr></thead><tbody id="rxBody"></tbody></table></div><div><button class="btn" id="rxAdd" type="button">Agregar medicamento</button></div><datalist id="meds"><option value="Paracetamol 500 mg comprimido"><option value="Ibuprofeno 400 mg comprimido"><option value="Losartán 50 mg comprimido"><option value="Enalapril 10 mg comprimido"><option value="Metformina 850 mg comprimido"><option value="Atorvastatina 20 mg comprimido"><option value="Levotiroxina 50 mcg comprimido"><option value="Omeprazol 20 mg cápsula"><option value="Salbutamol 100 mcg inhalador"><option value="Amoxicilina 500 mg cápsula"><option value="Sertralina 50 mg comprimido"></datalist><div class="field"><label for="f_rxobs">Observaciones de la receta</label><div class="fwrap"><textarea id="f_rxobs" data-store="1" style="min-height:70px"></textarea><button class="dict" type="button" data-target="f_rxobs" aria-label="Dictar observaciones de la receta" title="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button></div><div class="interim" id="i-f_rxobs" aria-live="polite"></div></div><h2 class="sub" id="cierre">Resumen y cierre</h2><p class="from">Revise el registro completo antes de cerrar. Cada bloque indica si lo relató el paciente o lo registró el médico.</p><div class="sum" id="sumAll"></div><div id="closeMsg"></div><div class="secnav"><button class="btn" data-go="diagnostico">Anterior</button><button class="btn primary" id="closeAt">Firmar y cerrar atención</button></div></div></section></div>
+</div>
+
+<div class="hfbar" id="hfBar" hidden role="region" aria-label="Grabación por voz"><div class="in pad">
+  <div class="hf-top"><span class="dot" aria-hidden="true"></span><b id="hfState">Micrófono detenido</b><span class="where" id="hfWhere"></span><span class="sp"></span>
+    <button class="btn" id="hfHelpBtn" type="button" aria-expanded="false" aria-controls="hfHelp">Comandos</button><button class="btn" id="hfPause" type="button">Grabar</button><button class="btn" id="hfClose" type="button" aria-label="Cerrar barra de grabación">Cerrar</button></div>
+  <div class="heard" id="hfHeard"></div>
+  <div class="act" id="hfAct" aria-live="polite"></div>
+  <div class="help" id="hfHelp" hidden></div>
+</div></div>
+
+<div class="demo"><div class="in pad">
+  <span><b>Modo demostración</b> · Paciente y datos ficticios</span>
+  <label>Caso de ejemplo <select id="caseSel"></select></label>
+  <button class="btn" id="clearAll" type="button">Atención en blanco</button>
+</div></div>
+
+<script src="snomed.js"></script>
+<script src="sinonimos.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="microfono.js"></script>
+<script>
+/* Aviso si styles.css o app.js no están en la misma carpeta que este archivo */
+window.addEventListener("load",function(){
+  var faltan=[];
+  if(!getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()) faltan.push("styles.css");
+  if(!window.VITALIS_OK) faltan.push("app.js");
+  if(!window.VitalisAuth) faltan.push("auth.js");
+  if(!window.VitalisDatos) faltan.push("datos.js");
+  if(!window.VITALIS_SNOMED) faltan.push("snomed.js");
+  if(!faltan.length) return;
+  var d=document.createElement("div");
+  d.setAttribute("role","alert");
+  d.style.cssText="background:#FCE4EC;color:#7A1E44;border:2px solid #A92D5C;padding:14px 18px;font:15px system-ui;line-height:1.5;margin:0";
+  d.innerHTML="<b>No se encontró: "+faltan.join(" y ")+".</b><br>Los archivos index.html, pacientes.html, ficha.html, styles.css y los archivos .js deben estar juntos en la misma carpeta y con esos nombres exactos. Si descargó el .zip, extráigalo primero (clic derecho → Extraer todo) y abra index.html desde la carpeta extraída.";
+  document.body.insertBefore(d,document.body.firstChild);
+});
+</script>
+
+</body>
+</html>

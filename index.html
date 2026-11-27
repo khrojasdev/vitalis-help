@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vitalis Help · Ingreso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script src="auth.js"></script>
+</head>
+<body class="login-page">
+
+<main class="login pad">
+  <div class="login-card">
+    <div class="login-brand"><i>VH</i><div><b>Vitalis Help</b><span>Ficha clínica electrónica · Atención ambulatoria</span></div></div>
+    <h1>Acceso para médicos</h1>
+    <p class="login-sub">Ingrese con su correo institucional para abrir la ficha clínica.</p>
+
+    <form id="loginForm" novalidate>
+      <label for="correo">Correo institucional</label>
+      <input class="login-inp" id="correo" type="email" autocomplete="username" placeholder="nombre.apellido@clinica-demo.cl" required>
+      <div class="perfil" id="perfil" aria-live="polite"></div>
+
+      <label for="clave">Contraseña</label>
+      <div class="clave-wrap">
+        <input class="login-inp" id="clave" type="password" autocomplete="current-password" required>
+        <button class="ver" type="button" id="verClave" aria-pressed="false">Mostrar</button>
+      </div>
+
+      <div class="login-err" id="loginErr" role="alert"></div>
+      <button class="btn primary login-btn" type="submit">Ingresar</button>
+    </form>
+  </div>
+
+  <section class="demo-cuentas" aria-labelledby="demoTit">
+    <h2 id="demoTit">Cuentas de demostración</h2>
+    <p>Contraseña de ambas: <code>Demo2026</code>. Pulse una para completar el formulario.</p>
+    <div id="cuentas"></div>
+  </section>
+
+  <p class="login-pie">Prototipo académico · Paciente y datos ficticios</p>
+</main>
+
+<script src="login.js"></script>
+</body>
+</html>

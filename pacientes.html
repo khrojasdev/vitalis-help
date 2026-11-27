@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es" data-privada>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vitalis Help · Mis pacientes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script src="auth.js"></script>
+<script src="datos.js"></script>
+</head>
+<body>
+
+<div class="appbar"><div class="in pad">
+  <div class="sys"><i>VH</i>Vitalis Help · Ficha clínica electrónica</div>
+  <div class="topr"><div class="who" data-usuario></div><button class="salir" type="button" data-salir>Cerrar sesión</button></div>
+</div></div>
+
+<main class="pac pad">
+  <div class="pac-head">
+    <div><h1>Mis pacientes de hoy</h1><p id="hoy"></p></div>
+    <button class="btn primary" type="button" id="btnNuevo" aria-expanded="false" aria-controls="formNuevo">+ Paciente nuevo</button>
+  </div>
+
+  <!-- Registro de paciente nuevo -->
+  <form class="pac-form" id="formNuevo" hidden novalidate>
+    <h2>Registrar paciente nuevo</h2>
+    <p class="pac-sub">Los campos con * son obligatorios. Use solo datos ficticios.</p>
+    <div class="pac-grid">
+      <label>Nombres *<input class="login-inp" id="nNombres" autocomplete="off"></label>
+      <label>Apellido paterno *<input class="login-inp" id="nPaterno" autocomplete="off"></label>
+      <label>Apellido materno<input class="login-inp" id="nMaterno" autocomplete="off"></label>
+      <label>RUT *<input class="login-inp" id="nRut" placeholder="12.345.678-5" autocomplete="off"></label>
+      <label>Fecha de nacimiento *<input class="login-inp" id="nNac" type="date"></label>
+      <label>Sexo *<select class="login-inp" id="nSexo"><option value="">Seleccione</option><option>Femenino</option><option>Masculino</option><option>Otro</option></select></label>
+      <label>Previsión *<select class="login-inp" id="nPrev"><option value="">Seleccione</option><option>FONASA</option><option>ISAPRE</option><option>Particular</option><option>Otra</option></select></label>
+      <label>Alergias<input class="login-inp" id="nAlerg" placeholder="Sin alergias conocidas" autocomplete="off"></label>
+      <label class="span2">Motivo de la consulta<input class="login-inp" id="nCita" placeholder="Ej.: dolor abdominal" autocomplete="off"></label>
+    </div>
+    <div class="login-err" id="nErr" role="alert"></div>
+    <div class="pac-acc">
+      <button class="btn" type="button" id="nCancelar">Cancelar</button>
+      <button class="btn primary" type="submit">Registrar y atender</button>
+    </div>
+  </form>
+
+  <div class="pac-tools">
+    <label class="sr" for="buscar">Buscar paciente</label>
+    <input class="login-inp pac-buscar" id="buscar" type="search" placeholder="Buscar por nombre, RUT o N° de ficha">
+    <span id="cuenta" class="pac-cuenta"></span>
+  </div>
+
+  <div id="lista" class="pac-lista"></div>
+
+  <p class="pac-pie">Prototipo académico · Pacientes y datos ficticios · <button class="link" type="button" id="reiniciar">Reiniciar demostración</button></p>
+</main>
+
+<script src="pacientes.js"></script>
+</body>
+</html>
